@@ -1,3 +1,6 @@
+import pprint
+
+
 class Trie:
     def __init__(self):
         self.root = {'*': '*'}
@@ -18,6 +21,9 @@ class Trie:
             current_node = current_node[letter]
         return '*' in current_node
 
+    def __str__(self):
+        return pprint.pformat(self.root, indent=1, compact=True)
+
 
 def trie_test():
     trie = Trie()
@@ -34,4 +40,5 @@ def trie_test():
     print(trie.contains("Yes"))
 
 
-trie_test()
+if __name__ == "__main__":
+    trie_test()

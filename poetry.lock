@@ -1,0 +1,17 @@
+[[package]]
+name = "wn"
+version = "0.0.23"
+description = "Wordnet"
+category = "main"
+optional = false
+python-versions = "*"
+
+[metadata]
+lock-version = "1.1"
+python-versions = "^3.8"
+content-hash = "9f2caf1674380e04f03bb56c2d6aaaf2a2a0ef3c19cd273701fcdc4eddf5b84d"
+
+[metadata.files]
+wn = [
+    {file = "wn-0.0.23.tar.gz", hash = "sha256:eee5b09a346600d2e33d6e69113a530283bbb422f04f9af6b277f2ca4ad514bd"},
+]
