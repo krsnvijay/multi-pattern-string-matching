@@ -1,31 +1,77 @@
-base = 256
-mod = 101
+class RabinKarp:
+    """
+    class to implement Rabin-Karp Algorithm
+
+    """
+
+    def __init__(self, pattern, size):
+        self.pattern = pattern
+        self.size = size
+        self.base = 3
+        self.hash = self.hash_pattern()
+        self.start = 0
+        self.end = size
+
+    def hash_pattern(self):
+        """
+        calculates the hash value of the given pattern
+
+        :return: int value of the hash
+        """
+        total = 0
+        y = [ord(x) for x in list(self.pattern)]
+        for i in range(self.size):
+            total += y[i] * self.base ** i
+        return total
+
+    def rolling_hash(self):
+        """
+        method to compute the next hash value from the previous hash value
+        helps in reducing the complexity from O(mn) to O(m+n)
+        where m is the size of string to match and n is the size of text
+        """
+        if self.end < len(self.pattern):
+            self.hash -= ord(self.pattern[self.start])
+            self.hash = int(self.hash/self.base)
+            self.hash += ord(self.pattern[self.end]) * self.base ** (self.size - 1)
+            self.start += 1
+            self.end += 1
 
 
-def rolling_hash(literal):
-    y = [ord(x) for x in list(literal)]
-    sum = 0
-    for i in range(len(y)):
-        sum += y[i] * base ** i
-        sum %= mod
-    return sum
+def string_matching(text, matcher):
+    """
+    performs the matching given a text document and list of subs
+
+    :param text: text to match from
+    :param matcher: list of patterns to match
+
+    :return: list of indices, if found
+    """
+
+    indices = list()
+    matcher_set = set()
+
+    # stores length of the pattern. length of all the patterns should be same
+    m = len(matcher[0])
+
+    # to store hash values for each string pattern
+    for sub in matcher:
+        temp = RabinKarp(sub, len(sub))
+        matcher_set.add(temp.hash)
+
+    uwu = RabinKarp(text, m)
+
+    # check if the pattern belongs in text
+    for i in range(len(text) - m + 1):
+        if uwu.hash in matcher_set and text[i:i + m] in matcher:
+            indices.append(i)
+        uwu.rolling_hash()
+
+    return indices
 
 
-def string_matching():
-    pattern = "dba"
-    something = "ccaccaaedba"
-    sum_pattern = rolling_hash(pattern)
-    for i in range(len(something) - len(pattern) + 1):
-        # change this
-        sum_something = rolling_hash(something[i:i+len(pattern)])
-        if sum_something == sum_pattern:
-            if something[i:i+len(pattern)] == pattern:
-                return i
-    return -1
-
-
-pos = string_matching()
-if pos == -1:
+pos = string_matching("ccaccddba", ["dba", "ccd", "cca"])
+if len(pos) == 0:
     print("pattern not found")
 else:
-    print(f'pattern found at {pos} index')
+    print(f'pattern found at index/indices {pos}')
