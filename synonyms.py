@@ -1,5 +1,5 @@
 from wn import WordNet
-from trie import Trie
+from trie import DictTrie
 from itertools import chain
 
 
@@ -12,7 +12,7 @@ def get_synonyms(word):
 text = "Privacy is a fundamental human right. At Apple, it’s also one of our key values"
 clean_text = text.replace('[.,]', '')
 words = text.split(" ")
-trie = Trie()
+trie = DictTrie()
 search_word = "fundamental"
 for synonym in get_synonyms(search_word):
     trie.add(synonym)
@@ -20,6 +20,6 @@ for synonym in get_synonyms(search_word):
 print(trie)
 
 for idx, word in enumerate(words):
-    if trie.contains(word):
+    if word in trie:
         print(f"{word} found at {idx}")
 
