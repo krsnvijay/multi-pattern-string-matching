@@ -59,19 +59,17 @@ def string_matching(text, matcher):
         temp = RabinKarp(sub, len(sub))
         matcher_set.add(temp.hash)
 
-    uwu = RabinKarp(text, m)
+    rabin_karp = RabinKarp(text, m)
 
     # check if the pattern belongs in text
     for i in range(len(text) - m + 1):
-        if uwu.hash in matcher_set and text[i:i + m] in matcher:
-            indices.append(i)
-        uwu.rolling_hash()
+        if rabin_karp.hash in matcher_set and text[i:i + m] in matcher:
+            indices.append((text[i:i + m], i))
+        rabin_karp.rolling_hash()
 
     return indices
 
 
-pos = string_matching("ccaccddba", ["dba", "ccd", "cca"])
-if len(pos) == 0:
-    print("pattern not found")
-else:
-    print(f'pattern found at index/indices {pos}')
+def test_rabin_karp(search_str, patterns):
+    print(string_matching(search_str, patterns))
+

@@ -1,12 +1,13 @@
 from aho_corasick import test_aho_corasick
 from commentz_walter import test_commentz_walter
 from corpus import corpus_word_list, randomized_text_patterns
+from rabin_karp import test_rabin_karp
 from synonyms import get_all_patterns
 
 
 def run_algorithms(n=100, m=5):
     print(f"Constructing a random corpus of text with {n} words...")
-    search_word_list = corpus_word_list(n)  # text corpus
+    search_word_list = corpus_word_list(n)
     search_str = ' '.join(search_word_list)
 
     patterns = randomized_text_patterns(search_word_list, m)
@@ -24,6 +25,9 @@ def run_algorithms(n=100, m=5):
     print("-" * 20)
     print("\n\n\nBenchmarking AHO-CORASICK")
     test_aho_corasick(search_str, patterns)
+    print("-" * 20)
+    print("\n\n\nBenchmarking RABIN-KARP")
+    test_rabin_karp(search_str, patterns)
     print("-" * 20)
 
 if __name__ == "__main__":
