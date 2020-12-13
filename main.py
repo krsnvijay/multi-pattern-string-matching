@@ -55,7 +55,7 @@ def plot_metrics():
     plt.yticks(range(0, y_limit+20, 10))
     plt.title('Running times of Commentz-Walter, Aho-Corasick and Rabin-Karp')
     plt.xlabel('Corpus size (in number of words)')
-    plt.ylabel('Time (in microseconds)')
+    plt.ylabel('Time (in milliseconds)')
     plt.legend(loc='best')
     plt.show()
 
