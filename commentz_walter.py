@@ -159,4 +159,4 @@ def test_commentz_walter(search_str, patterns, test_trie=False):
     for match in matches:
         # print((match[1] - 2) * ' ', match)
         print(match)
-    return (end_time-start_time)*10**3
+    return (end_time-start_time)*10**3, list(matches)

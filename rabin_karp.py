@@ -83,5 +83,5 @@ def test_rabin_karp(search_str, patterns):
     print(f"Matches: {len(match_tuples)} found in {end_time - start_time:0.8f} second(s)")
     for match_tuple in match_tuples:
         print(match_tuple)
-    return (end_time-start_time)*10**3
+    return (end_time-start_time)*10**3, list(match_tuples)
 

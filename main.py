@@ -71,15 +71,15 @@ def run_algorithms(n=100, m=5, corpus="random"):
     # call algorithms
     print("-" * 20)
     print("\n\n\nBenchmarking COMMENTZ-WALTER")
-    METRICS['cw'].append(test_commentz_walter(search_str, patterns))
+    METRICS['cw'].append(test_commentz_walter(search_str, patterns)[0])
 
     print("-" * 20)
     print("\n\n\nBenchmarking AHO-CORASICK")
-    METRICS['ac'].append(test_aho_corasick(search_str, patterns))
+    METRICS['ac'].append(test_aho_corasick(search_str, patterns)[0])
 
     print("-" * 20)
     print("\n\n\nBenchmarking RABIN-KARP")
-    METRICS['rk'].append(test_rabin_karp(search_str, patterns))
+    METRICS['rk'].append(test_rabin_karp(search_str, patterns)[0])
     print("-" * 20)
 
 
@@ -126,9 +126,9 @@ def write_results_csv(csv_name):
 
 if __name__ == "__main__":
     # on a random bag of words
-    for instance_size in INSTANCE_SIZES:
-        run_algorithms(n=instance_size)
-    plot_metrics(csv_name='word_vector_results')
+    # for instance_size in INSTANCE_SIZES:
+    #     run_algorithms(n=instance_size)
+    # plot_metrics(csv_name='word_vector_results')
     # on an excerpt from a novel
     # reset metrics
     METRICS = {
@@ -137,5 +137,5 @@ if __name__ == "__main__":
         'rk': []
     }
     for instance_size in INSTANCE_SIZES:
-        run_algorithms(corpus="news", n=instance_size)
+        run_algorithms(corpus="gutenburg", n=instance_size)
     plot_metrics(random_label='Novel corpus', csv_name='real_sources_results')
