@@ -1,5 +1,5 @@
 import time
-
+from collections import deque
 
 class RabinKarp:
     """
@@ -51,35 +51,35 @@ def string_matching(text, matcher):
     :return: list of indices, if found
     """
 
-    indices = list()
-    matcher_set = set()
+    matches = deque()
+    matcher_set = dict()
 
     # stores length of the pattern. length of all the patterns should be same
     m = min([len(x) for x in matcher])
 
-    # change the patterns to fixed lengths
-    fixed_matcher = [x[:m] for x in matcher]
-
     # to store hash values for each string pattern
     for sub in matcher:
         temp = RabinKarp(sub, m)
-        matcher_set.add(temp.hash)
+        matcher_set[sub] = temp.hash
 
-    uwu = RabinKarp(text, m)
+    text_obj = RabinKarp(text.lower(), m)
 
     # check if the pattern belongs in text
     for i in range(len(text) - m + 1):
-        if uwu.hash in matcher_set and text[i:i + m] in fixed_matcher:
-            indices.append((text[i:i + m], i))
-        uwu.rolling_hash()
+        if text_obj.hash in matcher_set.values():
+            for pat in matcher:
+                if text[i: i + len(pat)].lower() == pat:
+                    matches.append((text[i: i + len(pat)], i))
+        text_obj.rolling_hash()
 
-    return indices
+    return matches
 
 
 def test_rabin_karp(search_str, patterns):
     start_time = time.perf_counter()
     match_tuples = string_matching(search_str, patterns)
     end_time = time.perf_counter()
+    print(f'\nSearch for multi-patterns in a string of length {len(search_str)}')
     print(f"Matches: {len(match_tuples)} found in {end_time - start_time:0.8f} second(s)")
     for match_tuple in match_tuples:
         print(match_tuple)
