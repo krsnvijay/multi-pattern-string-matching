@@ -9,7 +9,7 @@ search for occurrences of each word in the search query with its synonyms from a
 WordNet. We can then observe how the performance of state-of-the-art multi-pattern string matching
 algorithms compares against their theoretical guarantees.
 
-![alt text](images/fig1.png)
+![patter matching](images/fig1.png)
 
 For this,  we  chose  three  state  of  the  art  algorithms  to  study,  analyze,  implement,  and  compare.Each algorithm is implemented in Python.  The three algorithms under consideration are:
 1.  Aho-Corasick algorithm (an extension of Knuth-Morris-Pratt algorithm)
@@ -38,7 +38,6 @@ For this,  we  chose  three  state  of  the  art  algorithms  to  study,  analyz
 ```
 matplotlib==3.3.3
 nltk==3.5
-numpy==1.19.4
 ```
 
 
@@ -76,10 +75,14 @@ python -m unittest
 ```
 
 ## Results
+1. [WordNet](https://wordnet.princeton.edu/)
 ![Word Vector](results/word_vector_results.svg)
 
+2. [Brown Corpus](http://korpus.uib.no/icame/brown/bcm.html) - "News" category
 ![News Corpus](results/real_sources_news_results.svg)
 
-![Novel Corpus](results/real_sources_novel_results.svg)
-
+3. [Web Text Corpus](http://www.nltk.org/nltk_data/) - file-id "firefox.txt"
 ![Webtext Corpus](results/real_sources_webtext_results.svg)
+
+4. [Project Gutenberg Selections](http://www.nltk.org/nltk_data/) - file-id "austen-emma.txt"
+![Novel Corpus](results/real_sources_novel_results.svg)

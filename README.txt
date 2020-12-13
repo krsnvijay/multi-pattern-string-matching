@@ -25,39 +25,14 @@ Directory structure
     ├── pyproject.toml          # Poetry's dependency management file
     └── README.md
 
-
-1. Running the project locally
+Libraries used
 -------------------
+matplotlib==3.3.3 (https://matplotlib.org/)
+nltk==3.5 (https://www.nltk.org/)
 
-# Using poetry
-Install poetry from (https://python-poetry.org/docs/#installation)
-which is a tool for dependency management and packaging in Python
-> poetry install
-
-# Using pip
-You can also install dependencies to your python environment
-> pip install -r requirements.txt
-
-2. Run algorithms
+Corpus used for benchmark
 -------------------
-main.py bench marks Rabin Karp, Commentz Walter, Aho Corasick
-using corpus from Wordnet, Webtext, Gutenberg, News downloadable from nltk library
-The generated graphs will be saved to the results directory
-
-# Using poetry
-> poetry run python main.py
-
-# Using your venv
-> python main.py
-
-3. Run unit tests
--------------------
-Unit tests, check if each of the algorithm returns the right matches
-with the search string and patterns provided to it
-
-# Using poetry
-> poetry run python -m unittest
-
-# Using pip
-> python -m unittest
-
+1. WordNet (https://wordnet.princeton.edu/)
+2. Brown Corpus (http://korpus.uib.no/icame/brown/bcm.html) - "News" category
+3. Web Text Corpus (http://www.nltk.org/nltk_data/) - file-id "firefox.txt"
+4. Project Gutenberg Selections (http://www.nltk.org/nltk_data/) - file-id "austen-emma.txt"
