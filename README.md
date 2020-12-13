@@ -15,8 +15,33 @@ For this,  we  chose  three  state  of  the  art  algorithms  to  study,  analyz
 1.  Aho-Corasick algorithm (an extension of Knuth-Morris-Pratt algorithm)
 2.  Commentz-Walter algorithm (an extension of Boyer-Moore algorithm)
 3.  Rabin-Karp algorithm
+
 ## Running the project locally
+
+### Directory structure
+    .
+    ├── results                 # Contains graphs,running time generated from benchmarks 
+    ├── aho_corasick.py         # Aho Corasick implementation
+    ├── commentz_walter.py      # Commentz Walter implementation
+    ├── rabin_karp.py           # Rabin Karp implementation
+    ├── main.py                 # Benchmarks all algorithms
+    ├── trie.py                 # Contains trie implementation
+    ├── corpus.py               # Downloads corpus from nltk and takes samples
+    ├── synonyms.py             # Gets synonyms for words from nltk
+    ├── test_algorithms.py      # Contains unit test class for all algorithms and trie
+    ├── test_data.py            # Contains data that is used as setup for each test case
+    ├── requirements.txt        # Dependencies to be installed using pip
+    ├── pyproject.toml          # Poetry's dependency management file
+    └── README.md
 ### Installing requirements
+
+```
+matplotlib==3.3.3
+nltk==3.5
+numpy==1.19.4
+```
+
+
 #### Using poetry
 Install [poetry](https://python-poetry.org/docs/#installation) which is a tool for dependency management and packaging in Python
 ```bash
