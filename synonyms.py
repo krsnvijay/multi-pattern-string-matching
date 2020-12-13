@@ -1,10 +1,14 @@
-from wn import WordNet
 from trie import DictTrie
 from itertools import chain
+from nltk.corpus import wordnet
+import nltk
 
+try:
+    nltk.data.find('wordnet')
+except:
+    nltk.download('wordnet')
 
 def get_synonyms(word):
-    wordnet = WordNet()
     synonyms = wordnet.synsets(word)
     normal_cased = set(chain.from_iterable([word.lemma_names() for word in synonyms]))
     # print(normal_cased)
