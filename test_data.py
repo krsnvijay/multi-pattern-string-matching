@@ -1,3 +1,7 @@
+"""
+Data that is used in setUp for each unit test
+"""
+
 search_str = 'Mozilla Firefox, or simply Firefox, is a free and open-source web browser developed by the Mozilla Foundation and its subsidiary, the Mozilla Corporation. Firefox uses the Gecko layout engine to render web pages, which implements current and anticipated web standards.'
 
 # Add synonyms for some words and some words that don't exist

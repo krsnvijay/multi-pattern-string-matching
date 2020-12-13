@@ -13,12 +13,14 @@ from corpus import corpus_word_list, randomized_text_patterns, novel_random_text
 from rabin_karp import test_rabin_karp
 from synonyms import get_all_patterns
 
+# store running time for each algorithm based on their instance size
 METRICS = {
     'cw': [],
     'ac': [],
     'rk': []
 }
 
+# no of words that can be present in a search_string
 INSTANCE_SIZES = [100, 1000, 10000]
 
 ALG_DICT = {
@@ -29,6 +31,10 @@ ALG_DICT = {
 
 
 def run_algorithms(n=100, m=5, corpus="random"):
+    """
+    Benchmark all algorithms for 'n' instance size, and 'm' patterns
+     using a corpus that is either random|book|webtext|news
+     """
     global METRICS
     if corpus == "random":
         print(f"Constructing a random corpus of text with {n} words...")
@@ -88,6 +94,10 @@ def run_algorithms(n=100, m=5, corpus="random"):
 
 
 def clean_text(tokens):
+    """
+    Preprocess words of a text to force lowercase conversion,remove punctuations,
+     remove numbers and remove stop words
+     """
     # convert tokens to lowercase
     tokens = [w.lower() for w in tokens]
     # remove punctuations for words
@@ -102,6 +112,10 @@ def clean_text(tokens):
 
 
 def plot_metrics(random_label='Random words', csv_name='result'):
+    """
+    Plot a multiline graph using metrics for each algorithm on all input sizes,
+     and export the graph to an output file
+     """
     write_results_csv(csv_name)
     plt.plot(INSTANCE_SIZES, METRICS['cw'], '-o', label="Commentz-Walter", color="chocolate")
     plt.plot(INSTANCE_SIZES, METRICS['ac'], '-o', label="Aho-Corasick", color="green")
@@ -116,23 +130,32 @@ def plot_metrics(random_label='Random words', csv_name='result'):
     plt.ylabel('Time (in milliseconds)')
     plt.legend(loc='best')
     print("Wrote results graph to %s.svg" % csv_name)
-    plt.savefig('results/%s.svg' % csv_name, bbox_inches='tight',format="svg")
+    plt.savefig('results/%s.svg' % csv_name, bbox_inches='tight', format="svg")
 
 
 def write_results_csv(csv_name):
+    """
+    Create and write the metrics for the current run to a csv file
+    """
     print("Wrote results to %s.csv" % csv_name)
     with open('results/%s.csv' % csv_name, 'w') as f:
         f.write("ALGORITHM, %s\n" % ', '.join(["%s_WORDS_in_msec" % res_size for res_size in INSTANCE_SIZES]))
         for key in METRICS.keys():
             f.write("%s, %s\n" % (ALG_DICT[key], ', '.join([str(res) for res in METRICS[key]])))
 
+
 def reset_metrics():
+    """
+    Reset metrics when running the benchmark with different corpus type
+    """
     global METRICS
     METRICS = {
         'cw': [],
         'ac': [],
         'rk': []
     }
+
+
 if __name__ == "__main__":
     # on a random bag of words
     for instance_size in INSTANCE_SIZES:
@@ -142,14 +165,17 @@ if __name__ == "__main__":
     # reset metrics
 
     reset_metrics()
+    # run benchmark on a jane-austen novel
     for instance_size in INSTANCE_SIZES:
         run_algorithms(corpus="gutenburg", n=instance_size)
     plot_metrics(random_label='Novel corpus', csv_name='real_sources_novel_results')
     reset_metrics()
+    # run benchmark on a news corpus
     for instance_size in INSTANCE_SIZES:
         run_algorithms(corpus="news", n=instance_size)
     plot_metrics(random_label='News corpus', csv_name='real_sources_news_results')
     reset_metrics()
+    # run benchmark on a web text corpus
     for instance_size in INSTANCE_SIZES:
         run_algorithms(corpus="webtext", n=instance_size)
     plot_metrics(random_label='Webtext corpus', csv_name='real_sources_webtext_results')

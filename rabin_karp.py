@@ -1,10 +1,10 @@
 import time
 from collections import deque
 
+
 class RabinKarp:
     """
     class to implement Rabin-Karp Algorithm
-
     """
 
     def __init__(self, pattern, size):
@@ -17,9 +17,7 @@ class RabinKarp:
 
     def hash_pattern(self):
         """
-        calculates the hash value of the given pattern
-
-        :return: int value of the hash
+        calculates and returns the hash value of the given pattern
         """
         total = 0
         y = [ord(x) for x in list(self.pattern)]
@@ -35,7 +33,7 @@ class RabinKarp:
         """
         if self.end < len(self.pattern):
             self.hash -= ord(self.pattern[self.start])
-            self.hash = int(self.hash/self.base)
+            self.hash = int(self.hash / self.base)
             self.hash += ord(self.pattern[self.end]) * self.base ** (self.size - 1)
             self.start += 1
             self.end += 1
@@ -43,15 +41,10 @@ class RabinKarp:
 
 def string_matching(text, matcher):
     """
-    performs the matching given a text document and list of subs
-
-    :param text: text to match from
-    :param matcher: list of patterns to match
-
-    :return: list of indices, if found
+    finds and returns the substring_matches given a text document and list of patterns to match
     """
 
-    matches = deque()
+    substring_matches = deque()
     matcher_set = dict()
 
     # stores length of the pattern. length of all the patterns should be same
@@ -69,10 +62,10 @@ def string_matching(text, matcher):
         if text_obj.hash in matcher_set.values():
             for pat in matcher:
                 if text[i: i + len(pat)].lower() == pat:
-                    matches.append((text[i: i + len(pat)], i))
+                    substring_matches.append((text[i: i + len(pat)], i))
         text_obj.rolling_hash()
 
-    return matches
+    return substring_matches
 
 
 def test_rabin_karp(search_str, patterns):
@@ -83,5 +76,4 @@ def test_rabin_karp(search_str, patterns):
     print(f"Matches: {len(match_tuples)} found in {end_time - start_time:0.8f} second(s)")
     for match_tuple in match_tuples:
         print(match_tuple)
-    return (end_time-start_time)*10**3, list(match_tuples)
-
+    return (end_time - start_time) * 10 ** 3, list(match_tuples)
