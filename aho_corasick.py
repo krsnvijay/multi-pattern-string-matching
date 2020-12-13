@@ -36,8 +36,8 @@ class AhoCorasick(NodeTrie):
             # Get longest matching suffix as failure link
             corasick_node.failure_link = corasick_node.get_failure_link()
             # if failure link is a word, then make the current link a dictionary link, support substring matching
-            suffix_is_word = corasick_node.failure_link.word is not None
-            corasick_node.dictionary_link = corasick_node.failure_link if suffix_is_word else corasick_node.failure_link.dictionary_link
+            failure_link_is_word = corasick_node.failure_link.word is not None
+            corasick_node.dictionary_link = corasick_node.failure_link if failure_link_is_word else corasick_node.failure_link.dictionary_link
 
     def find_all_matches(self, text):
         """

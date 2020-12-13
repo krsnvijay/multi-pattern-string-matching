@@ -16,11 +16,11 @@ class CommentzWalter(NodeTrie):
         super().add(word)
         position = 1
 
-        # Initialize character table
-        for character in word:
-            min_letter_depth = self.letter_lookup_table.get(character)
+        # Initialize letter table for the letters of the word
+        for letter in word:
+            min_letter_depth = self.letter_lookup_table.get(letter)
             if (min_letter_depth is None) or (min_letter_depth > position):
-                self.letter_lookup_table[character] = position
+                self.letter_lookup_table[letter] = position
             position += 1
 
         if self.min_depth is None:
@@ -69,7 +69,7 @@ class CommentzWalter(NodeTrie):
         """
         fifo_queue = deque()
 
-        # First, set suffix links for first children to root
+        # perform bfs from the root of the trie and set their failure links
         for letter in self.children:
             child = self.children[letter]
             child.failure_link = self
@@ -84,22 +84,23 @@ class CommentzWalter(NodeTrie):
                 child = walter_node.children[letter]
                 fifo_queue.append(child)
 
-            # set failure links for Cw_node similar to aho corasick
+            # set failure links for walter_node similar to aho corasick
             suffix_node = walter_node.get_failure_link()
             walter_node.failure_link = suffix_node
-            suffix_is_word = walter_node.failure_link.word is not None
-            walter_node.dictionary_link = walter_node.failure_link if suffix_is_word else walter_node.failure_link.dictionary_link
+            failure_link_is_word = walter_node.failure_link.word is not None
+            walter_node.dictionary_link = walter_node.failure_link if failure_link_is_word else walter_node.failure_link.dictionary_link
             if walter_node.dictionary_link is not None:
                 pass
 
             # Set reverse failure links and dictionary links for walter_node
+            walter_suffix_diff = walter_node.depth - suffix_node.depth
             is_set2 = walter_node.word is not None
-            if suffix_node.min_diff_s1 == -1 or suffix_node.min_diff_s1 > walter_node.depth - suffix_node.depth:
-                suffix_node.min_diff_s1 = walter_node.depth - suffix_node.depth
+            if suffix_node.min_diff_s1 == -1 or suffix_node.min_diff_s1 > walter_suffix_diff:
+                suffix_node.min_diff_s1 = walter_suffix_diff
                 suffix_node.failure_link_cw = walter_node
             if is_set2:
-                if suffix_node.min_diff_s2 == -1 or suffix_node.min_diff_s2 > walter_node.depth - suffix_node.depth:
-                    suffix_node.min_diff_s2 = walter_node.depth - suffix_node.depth
+                if suffix_node.min_diff_s2 == -1 or suffix_node.min_diff_s2 > walter_suffix_diff:
+                    suffix_node.min_diff_s2 = walter_suffix_diff
                     suffix_node.dictionary_link_cw = walter_node
 
         # initialize shift values
@@ -134,14 +135,13 @@ class CommentzWalter(NodeTrie):
         substring_matches = deque()
 
         while idx < len(text):
-            # Scan Phase
+            # start from the root
             walter_node = self
             j = 0
             search_letter = text[idx - j]
             while (search_letter in walter_node) and (idx - j >= 0):
                 walter_node = walter_node.children[search_letter]
                 j += 1
-
                 if walter_node.word is not None:
                     substring_matches.append((walter_node.word[::-1], idx - j + 1))
 
