@@ -52,20 +52,23 @@ def string_matching(text, matcher):
     matcher_set = set()
 
     # stores length of the pattern. length of all the patterns should be same
-    m = len(matcher[0])
+    m = min([len(x) for x in matcher])
+
+    # change the patterns to fixed lengths
+    fixed_matcher = [x[:m] for x in matcher]
 
     # to store hash values for each string pattern
     for sub in matcher:
-        temp = RabinKarp(sub, len(sub))
+        temp = RabinKarp(sub, m)
         matcher_set.add(temp.hash)
 
-    rabin_karp = RabinKarp(text, m)
+    uwu = RabinKarp(text, m)
 
     # check if the pattern belongs in text
     for i in range(len(text) - m + 1):
-        if rabin_karp.hash in matcher_set and text[i:i + m] in matcher:
-            indices.append((text[i:i + m], i))
-        rabin_karp.rolling_hash()
+        if uwu.hash in matcher_set and text[i:i + m] in fixed_matcher:
+            indices.append(i)
+        uwu.rolling_hash()
 
     return indices
 
