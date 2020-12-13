@@ -11,6 +11,12 @@ class NodeTrie:
         self.children = {}
         self.word = None
         self.failure_link = None
+        self.CWsuffix_link = None
+        self.CWoutput_link = None
+        self.min_difference_s1 = -1
+        self.min_difference_s2 = -1
+        self.min_depth = None
+        self.char_lookup_table = {}
         self.dictionary_link = None
 
     def add(self, word):
@@ -33,6 +39,7 @@ class NodeTrie:
 
     def has_word(self, word):
         current_node = self
+        word = word.lower()
         for letter in word:
             if letter not in current_node.children:
                 return False

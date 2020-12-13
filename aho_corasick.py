@@ -1,3 +1,4 @@
+from synonyms import get_all_patterns
 from trie import NodeTrie
 from collections import deque
 import time
@@ -33,6 +34,7 @@ class AhoCorasick(NodeTrie):
 
     def find_all_matches(self, text):
         matches = deque()
+        text = text.lower()
         pos = 0
         current_node = self
         for letter in text:
@@ -60,33 +62,28 @@ class AhoCorasick(NodeTrie):
         return matches
 
 
-def test_aho_corasick():
-
-    patterns = ["Hi", "Hit", "Hitormis", "Yes", "Yes'nt"]
-    print(f"Aho Corasick: Adding {len(patterns)} Patterns")
-    print(patterns)
+def test_aho_corasick(search_str, patterns, test_trie=False):
     aho_corasick = AhoCorasick()
     for pattern in patterns:
         aho_corasick.add(pattern)
 
     print("\nTrie: Created")
     print(aho_corasick)
-    test_patterns = ["Hi", "Hit", "No", "North", "Yes"]
-    print(f"\nTrie: Testing Patterns")
-    for test_pattern in test_patterns:
-        print((test_pattern, aho_corasick.has_word(test_pattern)))
+
+    if test_trie:
+        test_patterns = ["Hi", "Hit", "No", "North", "Yes"]
+        print(f"\nTrie: Testing Patterns")
+        for test_pattern in test_patterns:
+            print((test_pattern, aho_corasick.has_word(test_pattern)))
+
     print("\nCreating failure links")
     start_time = time.perf_counter()
     aho_corasick.create_failure_links()
-    search_str = "Hey Yes,HitYes'nt"
     matches = aho_corasick.find_all_matches(search_str)
     end_time = time.perf_counter()
     print(f'\nSearch for multi-patterns in a string of length {len(search_str)}')
     print(f"Matches: {len(matches)} found in {end_time - start_time:0.8f} second(s)")
-    print(f"'{search_str}'")
+
     for match in matches:
-        print((match[1] - 2)*' ',match)
-
-
-if __name__ == "__main__":
-    test_aho_corasick()
+        # print((match[1] - 2)*' ',match)
+        print(match)
