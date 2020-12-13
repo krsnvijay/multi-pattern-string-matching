@@ -82,7 +82,6 @@ def test_aho_corasick(search_str, patterns, test_trie=False):
     matches = aho_corasick.find_all_matches(search_str)
     end_time = time.perf_counter()
     print(f'\nSearch for multi-patterns in a string of length {len(search_str)}')
-    print(search_str)
     print(f"Matches: {len(matches)} found in {end_time - start_time:0.8f} second(s)")
 
     for match in matches:

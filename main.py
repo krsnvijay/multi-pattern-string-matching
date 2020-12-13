@@ -1,5 +1,5 @@
 import string
-
+import itertools
 import matplotlib.pyplot as plt
 from nltk.corpus import gutenberg
 from nltk.corpus import stopwords
@@ -42,21 +42,22 @@ def run_algorithms(n=100, m=5, corpus="random"):
         novel_words = clean_text(tokens)
         # take n sample of words from corpus word list
         search_word_list = corpus_word_list(novel_words, n)  # retrieve from novel
-        search_str = ' '.join(search_word_list)
+        search_str = ' '.join(corpus_word_list(list(tokens), n))
         # get m sample of words to use as patterns
         patterns = novel_random_text_patterns(search_word_list, m)
     elif corpus == "webtext":
         tokens = webtext.words('firefox.txt')
         webtext_words = clean_text(tokens)
         search_word_list = corpus_word_list(webtext_words, n)  # retrieve from novel
-        search_str = ' '.join(search_word_list)
+        search_str = ' '.join(corpus_word_list(list(tokens), n))
+
         # get m sample of words to use as patterns
         patterns = novel_random_text_patterns(search_word_list, m)
     elif corpus == "news":
         tokens = brown.words(categories='news')
         news_text_words = clean_text(tokens)
         search_word_list = corpus_word_list(news_text_words, n)  # retrieve from novel
-        search_str = ' '.join(search_word_list)
+        search_str = ' '.join(corpus_word_list(list(tokens), n))
         # get m sample of words to use as patterns
         patterns = novel_random_text_patterns(search_word_list, m)
 
@@ -71,14 +72,17 @@ def run_algorithms(n=100, m=5, corpus="random"):
     # call algorithms
     print("-" * 20)
     print("\n\n\nBenchmarking COMMENTZ-WALTER")
+    print("search string:", search_str)
     METRICS['cw'].append(test_commentz_walter(search_str, patterns)[0])
 
     print("-" * 20)
     print("\n\n\nBenchmarking AHO-CORASICK")
+    print("search string:", search_str)
     METRICS['ac'].append(test_aho_corasick(search_str, patterns)[0])
 
     print("-" * 20)
     print("\n\n\nBenchmarking RABIN-KARP")
+    print("search string:", search_str)
     METRICS['rk'].append(test_rabin_karp(search_str, patterns)[0])
     print("-" * 20)
 
@@ -106,36 +110,46 @@ def plot_metrics(random_label='Random words', csv_name='result'):
     y_limit = int(max(max(METRICS['cw']), max(METRICS['ac']), max(METRICS['rk'])))
     plt.ylim(0, y_limit)
     plt.xticks(range(0, INSTANCE_SIZES[-1] + 2000, 1000))
-    plt.yticks(range(0, y_limit + 20, 10))
+    plt.yticks(range(0, y_limit + 20, 20))
     plt.title(f"({random_label}) Running times of Commentz-Walter, Aho-Corasick and Rabin-Karp")
     plt.xlabel('Corpus size (in number of words)')
     plt.ylabel('Time (in milliseconds)')
     plt.legend(loc='best')
-    print("Wrote results graph to %s.jpg" % csv_name)
-    plt.savefig('%s.png' % csv_name, bbox_inches='tight')
+    print("Wrote results graph to %s.svg" % csv_name)
+    plt.savefig('results/%s.svg' % csv_name, bbox_inches='tight',format="svg")
     plt.show()
 
 
 def write_results_csv(csv_name):
     print("Wrote results to %s.csv" % csv_name)
-    with open('%s.csv' % csv_name, 'w') as f:
+    with open('results/%s.csv' % csv_name, 'w') as f:
         f.write("ALGORITHM, %s\n" % ', '.join(["%s_WORDS_in_msec" % res_size for res_size in INSTANCE_SIZES]))
         for key in METRICS.keys():
             f.write("%s, %s\n" % (ALG_DICT[key], ', '.join([str(res) for res in METRICS[key]])))
-
-
-if __name__ == "__main__":
-    # on a random bag of words
-    # for instance_size in INSTANCE_SIZES:
-    #     run_algorithms(n=instance_size)
-    # plot_metrics(csv_name='word_vector_results')
-    # on an excerpt from a novel
-    # reset metrics
+def reset_metrics():
+    global METRICS
     METRICS = {
         'cw': [],
         'ac': [],
         'rk': []
     }
+if __name__ == "__main__":
+    # on a random bag of words
+    for instance_size in INSTANCE_SIZES:
+        run_algorithms(n=instance_size)
+    plot_metrics(csv_name='word_vector_results')
+    # on an excerpt from a novel
+    # reset metrics
+
+    reset_metrics()
     for instance_size in INSTANCE_SIZES:
         run_algorithms(corpus="gutenburg", n=instance_size)
-    plot_metrics(random_label='Novel corpus', csv_name='real_sources_results')
+    plot_metrics(random_label='Novel corpus', csv_name='real_sources_novel_results')
+    reset_metrics()
+    for instance_size in INSTANCE_SIZES:
+        run_algorithms(corpus="news", n=instance_size)
+    plot_metrics(random_label='News corpus', csv_name='real_sources_news_results')
+    reset_metrics()
+    for instance_size in INSTANCE_SIZES:
+        run_algorithms(corpus="webtext", n=instance_size)
+    plot_metrics(random_label='Webtext corpus', csv_name='real_sources_webtext_results')
