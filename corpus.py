@@ -4,10 +4,17 @@ try:
     nltk.data.find('words')
     nltk.data.find('punkt')
     nltk.data.find('stopwords')
+    nltk.data.find('gutenberg')
+    nltk.data.find('brown')
+    nltk.data.find('webtext')
+
 except:
     nltk.download('words')
     nltk.download('punkt')
     nltk.download('stopwords')
+    nltk.download('gutenberg')
+    nltk.download('brown')
+    nltk.download('webtext')
 
 from nltk.corpus import words
 from random import sample, randint

@@ -1,15 +1,17 @@
 import string
 
+import matplotlib.pyplot as plt
+from nltk.corpus import gutenberg
+from nltk.corpus import stopwords
+from nltk.corpus import webtext
+from nltk.corpus import words
+from nltk.corpus import brown
+
 from aho_corasick import test_aho_corasick
 from commentz_walter import test_commentz_walter
 from corpus import corpus_word_list, randomized_text_patterns, novel_random_text_patterns
 from rabin_karp import test_rabin_karp
 from synonyms import get_all_patterns
-import matplotlib.pyplot as plt
-import re
-from nltk.tokenize import word_tokenize
-from nltk.corpus import words
-from nltk.corpus import stopwords
 
 METRICS = {
     'cw': [],
@@ -20,33 +22,34 @@ METRICS = {
 INSTANCE_SIZES = [100, 1000, 10000]
 
 
-def run_algorithms(n=100, m=5, random=False):
+def run_algorithms(n=100, m=5, corpus="random"):
     global METRICS
-    if random:
+    if corpus == "random":
         print(f"Constructing a random corpus of text with {n} words...")
         search_word_list = corpus_word_list(words.words(), n)
         search_str = ' '.join(search_word_list)
         patterns = randomized_text_patterns(search_word_list, m)
 
-    else:
+    elif corpus == "gutenburg":
         print(f"Retrieving a corpus of text from a novel having {n} words...")
-        file = open("pride-and-prejudice.txt", 'rt', encoding="utf8")
-        novel_text = file.read()
-        file.close()
-        # convert text to tokens
-        tokens = word_tokenize(novel_text)
-        # convert tokens to lowercase
-        tokens = [w.lower() for w in tokens]
-        # remove punctuations for words
-        table = str.maketrans('', '', string.punctuation)
-        stripped = [w.translate(table) for w in tokens]
-        # only include words that have alphabets
-        novel_words = [word for word in stripped if word.isalpha()]
-        # remove stop words
-        stop_words = set(stopwords.words('english'))
-        novel_words = [w for w in novel_words if not w in stop_words]
+        tokens = gutenberg.words('austen-emma.txt')
+        novel_words = clean_text(tokens)
         # take n sample of words from corpus word list
         search_word_list = corpus_word_list(novel_words, n)  # retrieve from novel
+        search_str = ' '.join(search_word_list)
+        # get m sample of words to use as patterns
+        patterns = novel_random_text_patterns(search_word_list, m)
+    elif corpus == "webtext":
+        tokens = webtext.words('firefox.txt')
+        webtext_words = clean_text(tokens)
+        search_word_list = corpus_word_list(webtext_words, n)  # retrieve from novel
+        search_str = ' '.join(search_word_list)
+        # get m sample of words to use as patterns
+        patterns = novel_random_text_patterns(search_word_list, m)
+    elif corpus == "news":
+        tokens = brown.words(categories='news')
+        news_text_words = clean_text(tokens)
+        search_word_list = corpus_word_list(news_text_words, n)  # retrieve from novel
         search_str = ' '.join(search_word_list)
         # get m sample of words to use as patterns
         patterns = novel_random_text_patterns(search_word_list, m)
@@ -74,7 +77,22 @@ def run_algorithms(n=100, m=5, random=False):
     print("-" * 20)
 
 
+def clean_text(tokens):
+    # convert tokens to lowercase
+    tokens = [w.lower() for w in tokens]
+    # remove punctuations for words
+    table = str.maketrans('', '', string.punctuation)
+    stripped = [w.translate(table) for w in tokens]
+    # only include words that have alphabets
+    cleaned_words = [word for word in stripped if word.isalpha()]
+    # remove stop words
+    stop_words = set(stopwords.words('english'))
+    cleaned_words = [w for w in cleaned_words if not w in stop_words]
+    return cleaned_words
+
+
 def plot_metrics(random_label='Random words'):
+    print(METRICS)
     plt.plot(INSTANCE_SIZES, METRICS['cw'], '-o', label="Commentz-Walter", color="chocolate")
     plt.plot(INSTANCE_SIZES, METRICS['ac'], '-o', label="Aho-Corasick", color="green")
     plt.plot(INSTANCE_SIZES, METRICS['rk'], '-o', label="Rabin-Karp", color="blue")
@@ -91,11 +109,18 @@ def plot_metrics(random_label='Random words'):
 
 
 if __name__ == "__main__":
+    global METRICS
     # on a random bag of words
     for instance_size in INSTANCE_SIZES:
         run_algorithms(n=instance_size)
     plot_metrics()
     # on an excerpt from a novel
+    #reset metrics
+    METRICS = {
+        'cw': [],
+        'ac': [],
+        'rk': []
+    }
     for instance_size in INSTANCE_SIZES:
-        run_algorithms(n=instance_size)
+        run_algorithms(corpus="news", n=instance_size)
     plot_metrics(random_label='Novel corpus')
