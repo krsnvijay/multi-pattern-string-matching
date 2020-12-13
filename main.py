@@ -14,11 +14,16 @@ METRICS = {
 INSTANCE_SIZES = [100, 1000, 10000]
 
 
-def run_algorithms(n=100, m=5):
+def run_algorithms(n=100, m=5, random=False):
     global METRICS
-    print(f"Constructing a random corpus of text with {n} words...")
-    search_word_list = corpus_word_list(n)
-    search_str = ' '.join(search_word_list)
+    if random:
+        print(f"Constructing a random corpus of text with {n} words...")
+        search_word_list = corpus_word_list(n)
+        search_str = ' '.join(search_word_list)
+    else:
+        print(f"Retrieving a corpus of text from a novel having {n} words...")
+        search_word_list = corpus_word_list(n) # retrieve from novel
+        search_str = ' '.join(search_word_list)
 
     patterns = randomized_text_patterns(search_word_list, m)
     before_syn_num = len(patterns)
@@ -44,7 +49,7 @@ def run_algorithms(n=100, m=5):
     print("-" * 20)
 
 
-def plot_metrics():
+def plot_metrics(random_label='Random words'):
     plt.plot(INSTANCE_SIZES, METRICS['cw'], '-o', label="Commentz-Walter", color="chocolate")
     plt.plot(INSTANCE_SIZES, METRICS['ac'], '-o', label="Aho-Corasick", color="green")
     plt.plot(INSTANCE_SIZES, METRICS['rk'], '-o', label="Rabin-Karp", color="blue")
@@ -53,7 +58,7 @@ def plot_metrics():
     plt.ylim(0, y_limit)
     plt.xticks(range(0, INSTANCE_SIZES[-1]+2000, 1000))
     plt.yticks(range(0, y_limit+20, 10))
-    plt.title('Running times of Commentz-Walter, Aho-Corasick and Rabin-Karp')
+    plt.title(f"({random_label}) Running times of Commentz-Walter, Aho-Corasick and Rabin-Karp")
     plt.xlabel('Corpus size (in number of words)')
     plt.ylabel('Time (in milliseconds)')
     plt.legend(loc='best')
@@ -61,6 +66,11 @@ def plot_metrics():
 
 
 if __name__ == "__main__":
+    # on a random bag of words
     for instance_size in INSTANCE_SIZES:
         run_algorithms(n=instance_size)
     plot_metrics()
+    # on an excerpt from a novel
+    for instance_size in INSTANCE_SIZES:
+        run_algorithms(n=instance_size)
+    plot_metrics(random_label='Novel corpus')
