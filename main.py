@@ -21,6 +21,12 @@ METRICS = {
 
 INSTANCE_SIZES = [100, 1000, 10000]
 
+ALG_DICT = {
+    'cw': 'Commentz-Walter',
+    'ac': 'Aho-Corasick',
+    'rk': 'Rabin-Karp'
+}
+
 
 def run_algorithms(n=100, m=5, corpus="random"):
     global METRICS
@@ -91,8 +97,8 @@ def clean_text(tokens):
     return cleaned_words
 
 
-def plot_metrics(random_label='Random words'):
-    print(METRICS)
+def plot_metrics(random_label='Random words', csv_name='result'):
+    write_results_csv(csv_name)
     plt.plot(INSTANCE_SIZES, METRICS['cw'], '-o', label="Commentz-Walter", color="chocolate")
     plt.plot(INSTANCE_SIZES, METRICS['ac'], '-o', label="Aho-Corasick", color="green")
     plt.plot(INSTANCE_SIZES, METRICS['rk'], '-o', label="Rabin-Karp", color="blue")
@@ -105,17 +111,26 @@ def plot_metrics(random_label='Random words'):
     plt.xlabel('Corpus size (in number of words)')
     plt.ylabel('Time (in milliseconds)')
     plt.legend(loc='best')
+    print("Wrote results graph to %s.jpg" % csv_name)
+    plt.savefig('%s.png' % csv_name, bbox_inches='tight')
     plt.show()
 
 
+def write_results_csv(csv_name):
+    print("Wrote results to %s.csv" % csv_name)
+    with open('%s.csv' % csv_name, 'w') as f:
+        f.write("ALGORITHM, %s\n" % ', '.join(["%s_WORDS_in_msec" % res_size for res_size in INSTANCE_SIZES]))
+        for key in METRICS.keys():
+            f.write("%s, %s\n" % (ALG_DICT[key], ', '.join([str(res) for res in METRICS[key]])))
+
+
 if __name__ == "__main__":
-    global METRICS
     # on a random bag of words
     for instance_size in INSTANCE_SIZES:
         run_algorithms(n=instance_size)
-    plot_metrics()
+    plot_metrics(csv_name='word_vector_results')
     # on an excerpt from a novel
-    #reset metrics
+    # reset metrics
     METRICS = {
         'cw': [],
         'ac': [],
@@ -123,4 +138,4 @@ if __name__ == "__main__":
     }
     for instance_size in INSTANCE_SIZES:
         run_algorithms(corpus="news", n=instance_size)
-    plot_metrics(random_label='Novel corpus')
+    plot_metrics(random_label='Novel corpus', csv_name='real_sources_results')
