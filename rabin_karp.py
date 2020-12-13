@@ -1,3 +1,6 @@
+import time
+
+
 class RabinKarp:
     """
     class to implement Rabin-Karp Algorithm
@@ -67,12 +70,18 @@ def string_matching(text, matcher):
     # check if the pattern belongs in text
     for i in range(len(text) - m + 1):
         if uwu.hash in matcher_set and text[i:i + m] in fixed_matcher:
-            indices.append(i)
+            indices.append((text[i:i + m], i))
         uwu.rolling_hash()
 
     return indices
 
 
 def test_rabin_karp(search_str, patterns):
-    print(string_matching(search_str, patterns))
+    start_time = time.perf_counter()
+    match_tuples = string_matching(search_str, patterns)
+    end_time = time.perf_counter()
+    print(f"Matches: {len(match_tuples)} found in {end_time - start_time:0.8f} second(s)")
+    for match_tuple in match_tuples:
+        print(match_tuple)
+    return (end_time-start_time)*10**3
 

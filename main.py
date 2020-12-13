@@ -40,15 +40,16 @@ def run_algorithms(n=100, m=5):
 
     print("-" * 20)
     print("\n\n\nBenchmarking RABIN-KARP")
-    test_rabin_karp(search_str, patterns)
+    METRICS['rk'].append(test_rabin_karp(search_str, patterns))
     print("-" * 20)
 
 
 def plot_metrics():
     plt.plot(INSTANCE_SIZES, METRICS['cw'], '-o', label="Commentz-Walter", color="chocolate")
     plt.plot(INSTANCE_SIZES, METRICS['ac'], '-o', label="Aho-Corasick", color="green")
+    plt.plot(INSTANCE_SIZES, METRICS['rk'], '-o', label="Rabin-Karp", color="blue")
     plt.xlim(0, INSTANCE_SIZES[-1])
-    y_limit = int(max(max(METRICS['cw']), max(METRICS['ac'])))
+    y_limit = int(max(max(METRICS['cw']), max(METRICS['ac']), max(METRICS['rk'])))
     plt.ylim(0, y_limit)
     plt.xticks(range(0, INSTANCE_SIZES[-1]+2000, 1000))
     plt.yticks(range(0, y_limit+20, 10))
