@@ -51,10 +51,10 @@ python -m unittest
 ```
 
 ## Results
-![alt text](results/word_vector_results.svg)
+![Word Vector](results/word_vector_results.svg)
 
-![alt text](results/real_sources_news_results.svg)
+![News Corpus](results/real_sources_news_results.svg)
 
-![alt text](results/real_sources_novel_results.svg)
+![Novel Corpus](results/real_sources_novel_results.svg)
 
-![alt text](results/real_sources_webtext_results.svg)
+![Webtext Corpus](results/real_sources_webtext_results.svg)
