@@ -1,9 +1,6 @@
 import time
-
-from corpus import corpus_word_list, randomized_text_patterns
 from trie import NodeTrie
 from collections import deque
-from synonyms import get_all_patterns
 
 
 class CommentzWalter(NodeTrie):

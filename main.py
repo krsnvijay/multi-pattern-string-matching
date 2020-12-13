@@ -117,7 +117,6 @@ def plot_metrics(random_label='Random words', csv_name='result'):
     plt.legend(loc='best')
     print("Wrote results graph to %s.svg" % csv_name)
     plt.savefig('results/%s.svg' % csv_name, bbox_inches='tight',format="svg")
-    plt.show()
 
 
 def write_results_csv(csv_name):
@@ -126,6 +125,7 @@ def write_results_csv(csv_name):
         f.write("ALGORITHM, %s\n" % ', '.join(["%s_WORDS_in_msec" % res_size for res_size in INSTANCE_SIZES]))
         for key in METRICS.keys():
             f.write("%s, %s\n" % (ALG_DICT[key], ', '.join([str(res) for res in METRICS[key]])))
+
 def reset_metrics():
     global METRICS
     METRICS = {

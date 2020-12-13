@@ -1,4 +1,3 @@
-from synonyms import get_all_patterns
 from trie import NodeTrie
 from collections import deque
 import time
