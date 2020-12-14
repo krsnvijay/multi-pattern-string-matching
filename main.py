@@ -132,6 +132,7 @@ def plot_metrics(random_label='Random words', csv_name='result'):
     print("Wrote results graph to %s.svg" % csv_name)
     plt.savefig('results/%s.svg' % csv_name, bbox_inches='tight', format="svg")
     plt.clf()
+    plt.close()
 
 
 
