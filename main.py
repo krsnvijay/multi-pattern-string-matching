@@ -20,6 +20,12 @@ METRICS = {
     'rk': []
 }
 
+THEORETICAL_METRICS = {
+    'cw': [],
+    'ac': [],
+    'rk': []
+}
+
 # no of words that can be present in a search_string
 INSTANCE_SIZES = [100, 1000, 10000]
 
@@ -41,7 +47,6 @@ def run_algorithms(n=100, m=5, corpus="random"):
         search_word_list = corpus_word_list(words.words(), n)
         search_str = ' '.join(search_word_list)
         patterns = randomized_text_patterns(search_word_list, m)
-
     elif corpus == "gutenburg":
         print(f"Retrieving a corpus of text from a novel having {n} words...")
         tokens = gutenberg.words('austen-emma.txt')
@@ -80,17 +85,22 @@ def run_algorithms(n=100, m=5, corpus="random"):
     print("\n\n\nBenchmarking COMMENTZ-WALTER")
     print("search string:", search_str)
     METRICS['cw'].append(test_commentz_walter(search_str, patterns)[0])
+    THEORETICAL_METRICS['cw'].append((len(search_str) * len(max(patterns, key=len)))/1000)  # O(mn)
 
     print("-" * 20)
     print("\n\n\nBenchmarking AHO-CORASICK")
     print("search string:", search_str)
-    METRICS['ac'].append(test_aho_corasick(search_str, patterns)[0])
+    ac_metrics = test_aho_corasick(search_str, patterns)
+    METRICS['ac'].append(ac_metrics[0])
+    THEORETICAL_METRICS['ac'].append((
+        len(search_str) + ac_metrics[0] + sum(len(pattern) for pattern in patterns))/1000)  # O(n + m + k)
 
     print("-" * 20)
     print("\n\n\nBenchmarking RABIN-KARP")
     print("search string:", search_str)
     METRICS['rk'].append(test_rabin_karp(search_str, patterns)[0])
     print("-" * 20)
+    THEORETICAL_METRICS['rk'].append(len(search_str) + m * len(min(patterns, key=len)))
 
 
 def clean_text(tokens):
@@ -135,7 +145,6 @@ def plot_metrics(random_label='Random words', csv_name='result'):
     plt.close()
 
 
-
 def write_results_csv(csv_name):
     """
     Create and write the metrics for the current run to a csv file
@@ -159,11 +168,32 @@ def reset_metrics():
     }
 
 
+def plot_comparison_metrics(alg):
+    plt.plot(INSTANCE_SIZES, METRICS[alg], '-o', label=f"Experimental {ALG_DICT[alg]}", color="blue")
+    plt.plot(INSTANCE_SIZES, THEORETICAL_METRICS[alg], '--bo', label=f"Theoretical {ALG_DICT[alg]}", color="red")
+    plt.xlim(0, INSTANCE_SIZES[-1])
+    y_limit = int(max(max(METRICS[alg]), max(THEORETICAL_METRICS[alg])))
+    plt.ylim(0, y_limit)
+    plt.xticks(range(0, INSTANCE_SIZES[-1] + 2000, 1000))
+    plt.yticks(range(0, y_limit + 20, 20))
+    plt.title(f"{ALG_DICT[alg]} Theoretical guarantee vs Experimental running time")
+    plt.xlabel('Corpus size (in number of words)')
+    plt.ylabel('Time (in milliseconds)')
+    plt.legend(loc='best')
+    print("Wrote results graph to %s.svg" % alg)
+    plt.savefig('results/%s.svg' % alg, bbox_inches='tight', format="svg")
+    plt.clf()
+    plt.close()
+
+
 if __name__ == "__main__":
     # on a random bag of words
     for instance_size in INSTANCE_SIZES:
         run_algorithms(n=instance_size)
     plot_metrics(csv_name='word_vector_results')
+    plot_comparison_metrics('ac')
+    plot_comparison_metrics('cw')
+    plot_comparison_metrics('rk')
     # on an excerpt from a novel
     # reset metrics
 
