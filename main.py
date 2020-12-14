@@ -85,7 +85,7 @@ def run_algorithms(n=100, m=5, corpus="random"):
     print("\n\n\nBenchmarking COMMENTZ-WALTER")
     print("search string:", search_str)
     METRICS['cw'].append(test_commentz_walter(search_str, patterns)[0])
-    THEORETICAL_METRICS['cw'].append((len(search_str) * len(max(patterns, key=len)))/1000)  # O(mn)
+    THEORETICAL_METRICS['cw'].append((len(search_str) * len(max(patterns, key=len))) / 1000)  # O(mn)
 
     print("-" * 20)
     print("\n\n\nBenchmarking AHO-CORASICK")
@@ -93,14 +93,15 @@ def run_algorithms(n=100, m=5, corpus="random"):
     ac_metrics = test_aho_corasick(search_str, patterns)
     METRICS['ac'].append(ac_metrics[0])
     THEORETICAL_METRICS['ac'].append((
-        len(search_str) + ac_metrics[0] + sum(len(pattern) for pattern in patterns))/1000)  # O(n + m + k)
+                                             len(search_str) + ac_metrics[0] + sum(
+                                         len(pattern) for pattern in patterns)) / 1000)  # O(n + m + k)
 
     print("-" * 20)
     print("\n\n\nBenchmarking RABIN-KARP")
     print("search string:", search_str)
     METRICS['rk'].append(test_rabin_karp(search_str, patterns)[0])
     print("-" * 20)
-    THEORETICAL_METRICS['rk'].append(len(search_str) + m * len(min(patterns, key=len)))
+    THEORETICAL_METRICS['rk'].append((len(search_str)*m + len(min(patterns, key=len))) / 1000)  # O(nm + k)
 
 
 def clean_text(tokens):
@@ -175,13 +176,14 @@ def plot_comparison_metrics(alg):
     y_limit = int(max(max(METRICS[alg]), max(THEORETICAL_METRICS[alg])))
     plt.ylim(0, y_limit)
     plt.xticks(range(0, INSTANCE_SIZES[-1] + 2000, 1000))
-    plt.yticks(range(0, y_limit + 20, 20))
+    if alg == 'ac':
+        plt.yticks(range(0, y_limit + 20, 20))
     plt.title(f"{ALG_DICT[alg]} Theoretical guarantee vs Experimental running time")
     plt.xlabel('Corpus size (in number of words)')
     plt.ylabel('Time (in milliseconds)')
     plt.legend(loc='best')
-    print("Wrote results graph to %s.svg" % alg)
-    plt.savefig('results/%s.svg' % alg, bbox_inches='tight', format="svg")
+    print("Wrote results graph to %s.svg" % f"theoretical_cmp_{alg}")
+    plt.savefig('results/%s.svg' % f"theoretical_cmp_{alg}", bbox_inches='tight', format="svg")
     plt.clf()
     plt.close()
 
